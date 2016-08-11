@@ -5,23 +5,78 @@
  */
 package diuf.sudoku.gui;
 
-import java.security.*;
-import java.text.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-
-import javax.swing.*;
-import javax.swing.UIManager.*;
-import javax.swing.tree.*;
-
-import diuf.sudoku.*;
 import static diuf.sudoku.Settings.*;
-import diuf.sudoku.solver.*;
-import diuf.sudoku.solver.checks.*;
-import diuf.sudoku.tools.*;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.security.AccessControlException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import diuf.sudoku.Cell;
+import diuf.sudoku.Settings;
+import diuf.sudoku.SolvingTechnique;
+import diuf.sudoku.solver.DirectHint;
+import diuf.sudoku.solver.Hint;
+import diuf.sudoku.solver.IndirectHint;
+import diuf.sudoku.solver.Rule;
+import diuf.sudoku.solver.WarningHint;
+import diuf.sudoku.solver.checks.AnalysisInfo;
+import diuf.sudoku.tools.Asker;
+import diuf.sudoku.tools.HtmlLoader;
 
 /**
  * The main window of the application.
@@ -51,7 +106,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JPanel buttonsPane = null;
     private JButton btnGetAllHints = null;
     private JButton btnApplyHintAndGet = null;
-    private JButton btnQuit = null;
+    private JButton btnUndoStep = null;
     private JPanel buttonsContainer = null;
     private JScrollPane hintsTreeScrollpane = null;
     private JButton btnGetNextHint = null;
@@ -79,6 +134,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JMenu toolMenu = null;
     private JMenuItem mitCheckValidity = null;
     private JMenuItem mitAnalyse = null;
+    private JMenuItem mitUndoStep = null;
     private JMenuItem mitSolveStep = null;
     private JMenuItem mitGetNextHint = null;
     private JMenuItem mitApplyHint = null;
@@ -527,7 +583,7 @@ public class SudokuFrame extends JFrame implements Asker {
             buttonsPane.add(getBtnGetNextHint(), gridBagConstraints11);
             buttonsPane.add(getBtnApplyHintAndGet(), gridBagConstraints1);
             buttonsPane.add(getBtnGetAllHints(), gridBagConstraints2);
-            buttonsPane.add(getBtnQuit(), gridBagConstraints3);
+            buttonsPane.add(getBtnUndoStep(), gridBagConstraints3);
             buttonsPane.add(getBtnApplyHint(), gridBagConstraints21);
             buttonsPane.add(getBtnCheckValidity(), gridBagConstraints);
         }
@@ -581,22 +637,6 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return btnApplyHintAndGet;
-    }
-
-    private JButton getBtnQuit() {
-        if (btnQuit == null) {
-            btnQuit = new JButton();
-            btnQuit.setText("Quit");
-            btnQuit.setToolTipText("Quit the application");
-            btnQuit.setMnemonic(java.awt.event.KeyEvent.VK_Q);
-            btnQuit.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    quit();
-                }
-            });
-        }
-        return btnQuit;
     }
 
     private JPanel getButtonsContainer() {
@@ -669,6 +709,21 @@ public class SudokuFrame extends JFrame implements Asker {
         }
         return btnCheckValidity;
     }
+    
+    private JButton getBtnUndoStep() {
+        if (btnUndoStep == null) {
+          btnUndoStep = new JButton();
+          btnUndoStep.setText("Undo step");
+          btnUndoStep.setToolTipText("Undo previous solve step or value selection");
+          btnUndoStep.setMnemonic(85);
+          btnUndoStep.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              SudokuFrame.this.engine.undoStep();
+            }
+          });
+        }
+        return this.btnUndoStep;
+      }
 
     private JButton getBtnApplyHint() {
         if (btnApplyHint == null) {
@@ -1017,6 +1072,9 @@ public class SudokuFrame extends JFrame implements Asker {
             getMitApplyHint().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
             toolMenu.add(getMitGetAllHints());
             getMitGetAllHints().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+            toolMenu.add(getMitUndoStep());
+            getMitUndoStep().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,
+                    InputEvent.SHIFT_MASK));
             toolMenu.addSeparator();
             toolMenu.add(getMitGetSmallClue());
             getMitGetSmallClue().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
@@ -1071,6 +1129,22 @@ public class SudokuFrame extends JFrame implements Asker {
         return mitAnalyse;
     }
 
+    private JMenuItem getMitUndoStep()
+    {
+      if (mitUndoStep == null) {
+        mitUndoStep = new JMenuItem();
+        mitUndoStep.setText("Undo step");
+        mitUndoStep.setMnemonic(85);
+        mitUndoStep.setToolTipText(getBtnUndoStep().getToolTipText());
+        mitUndoStep.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            engine.undoStep();
+          }
+        });
+      }
+      return mitUndoStep;
+    }
+    
     private JMenuItem getMitSolveStep() {
         if (mitSolveStep == null) {
             mitSolveStep = new JMenuItem();

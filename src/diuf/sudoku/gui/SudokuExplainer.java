@@ -5,15 +5,37 @@
  */
 package diuf.sudoku.gui;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
-import diuf.sudoku.*;
-import diuf.sudoku.io.*;
-import diuf.sudoku.solver.*;
-import diuf.sudoku.tools.*;
+import diuf.sudoku.Cell;
+import diuf.sudoku.Grid;
+import diuf.sudoku.Settings;
+import diuf.sudoku.io.ErrorMessage;
+import diuf.sudoku.io.SudokuIO;
+import diuf.sudoku.solver.DirectHint;
+import diuf.sudoku.solver.Hint;
+import diuf.sudoku.solver.HintsAccumulator;
+import diuf.sudoku.solver.IndirectHint;
+import diuf.sudoku.solver.Rule;
+import diuf.sudoku.solver.Solver;
+import diuf.sudoku.solver.WarningHint;
+import diuf.sudoku.tools.HtmlLoader;
+import diuf.sudoku.tools.SingletonBitSet;
+import diuf.sudoku.tools.StrongReference;
 
 /**
  * The main class and controller. All actions performed in the gui
@@ -38,7 +60,8 @@ public class SudokuExplainer {
     private List<Hint> filteredHints = null; // All hints (filtered)
     private boolean isFiltered = true;
     private List<Hint> selectedHints = new ArrayList<Hint>(); // Currently selected hint
-
+    private Stack<Grid> gridStack = new Stack<Grid>(); // Stack for undo
+    
     // Cache for filter
     Set<Cell> givenCells = new HashSet<Cell>(); // Cell values already encountered
     Map<Cell, BitSet> removedPotentials = new HashMap<Cell, BitSet>(); // Removable potentials already encountered
@@ -242,6 +265,7 @@ public class SudokuExplainer {
      * the cell's value was erased.
      */
     public void cellValueTyped(Cell cell, int value) {
+    	pushGrid();
         int oldValue = cell.getValue();
         cell.setValue(value);
         if (value == 0 || oldValue != 0)
@@ -258,6 +282,7 @@ public class SudokuExplainer {
     }
 
     public void candidateTyped(Cell cell, int candidate) {
+    	pushGrid();
         if (cell.hasPotentialValue(candidate))
             cell.removePotentialValue(candidate);
         else
@@ -430,10 +455,15 @@ public class SudokuExplainer {
     }
 
     public void applySelectedHints() {
+    	pushGrid();
         for (Hint hint : selectedHints)
             hint.apply();
         clearHints();
         repaintAll();
+    }
+    
+    public void undoStep() {
+    	popGrid();
     }
 
     public void applySelectedHintsAndContinue() {
@@ -468,6 +498,22 @@ public class SudokuExplainer {
             JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
                     (message.isFatal() ? JOptionPane.ERROR_MESSAGE : JOptionPane.WARNING_MESSAGE));
     }
+    
+    public void pushGrid() {
+        Grid copy = new Grid();
+        this.grid.copyTo(copy);
+        this.gridStack.push(copy);
+      }
+      
+      private void popGrid() {
+        if (!this.gridStack.isEmpty()) {
+          Grid prev = (Grid)this.gridStack.pop();
+          prev.copyTo(this.grid);
+          this.solver.rebuildPotentialValues();
+          clearHints();
+          repaintAll();
+        }
+      }
 
     public void copyGrid() {
         SudokuIO.saveToClipboard(grid);
