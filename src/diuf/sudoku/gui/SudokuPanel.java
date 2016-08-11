@@ -443,7 +443,7 @@ public class SudokuPanel extends JPanel {
             int x = value > 0 ? selectedCell.getX() : -1;
             int y = value > 0 ? selectedCell.getY() : -1;
 
-	    boolean showing = Settings.getInstance().isShowingCandidateMaskes();
+	    boolean showing = Settings.getInstance().isShowingCandidateMasks();
 
             if (cell.getValue() == value) {
                 col = sameCellColor;
