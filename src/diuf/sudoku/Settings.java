@@ -16,13 +16,14 @@ public class Settings {
 
     public final static int VERSION = 1;
     public final static int REVISION = 3;
-    public final static String SUBREV = ".0";
+    public final static String SUBREV = ".1";
 
     private static Settings instance = null;
 
     private boolean isRCNotation = false;
     private boolean isAntialiasing = true;
     private boolean isShowingCandidates = true;
+    private boolean isShowingCandidateMaskes = true;
     private String lookAndFeelClassName = null;
 
     private EnumSet<SolvingTechnique> techniques;
@@ -64,6 +65,15 @@ public class Settings {
 
     public boolean isShowingCandidates() {
         return this.isShowingCandidates;
+    }
+
+    public void setShowingCandidateMaskes(boolean value) {
+        this.isShowingCandidateMaskes = value;
+        save();
+    }
+
+    public boolean isShowingCandidateMaskes() {
+        return this.isShowingCandidateMaskes;
     }
 
     public String getLookAndFeelClassName() {
@@ -127,6 +137,7 @@ public class Settings {
             isRCNotation = prefs.getBoolean("isRCNotation", isRCNotation);
             isAntialiasing = prefs.getBoolean("isAntialiasing", isAntialiasing);
             isShowingCandidates = prefs.getBoolean("isShowingCandidates", isShowingCandidates);
+            isShowingCandidateMaskes = prefs.getBoolean("isShowingCandidateMaskes", isShowingCandidateMaskes);
             lookAndFeelClassName = prefs.get("lookAndFeelClassName", lookAndFeelClassName);
         } catch (SecurityException ex) {
             // Maybe we are running from an applet. Do nothing
@@ -141,6 +152,7 @@ public class Settings {
             prefs.putBoolean("isRCNotation", isRCNotation);
             prefs.putBoolean("isAntialiasing", isAntialiasing);
             prefs.putBoolean("isShowingCandidates", isShowingCandidates);
+            prefs.putBoolean("isShowingCandidateMaskes", isShowingCandidateMaskes);
             if (lookAndFeelClassName != null)
                 prefs.put("lookAndFeelClassName", lookAndFeelClassName);
             try {

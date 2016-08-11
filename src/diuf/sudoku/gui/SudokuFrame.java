@@ -158,6 +158,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JMenuItem mitShowWelcome = null;
     private JMenuItem mitGenerate = null;
     private JCheckBoxMenuItem mitShowCandidates = null;
+    private JCheckBoxMenuItem mitShowCandidateMaskes = null;
     private JMenuItem mitSelectTechniques = null;
     private JPanel pnlEnabledTechniques = null;
     private JLabel lblEnabledTechniques = null;
@@ -1258,6 +1259,7 @@ public class SudokuFrame extends JFrame implements Asker {
             optionsMenu.setMnemonic(java.awt.event.KeyEvent.VK_O);
             optionsMenu.add(getMitFilter());
             optionsMenu.add(getMitShowCandidates());
+            optionsMenu.add(getMitShowCandidateMaskes());
             optionsMenu.add(getMitSelectTechniques());
             optionsMenu.addSeparator();
             optionsMenu.add(getMitChessMode());
@@ -1476,6 +1478,23 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return mitShowCandidates;
+    }
+
+    private JCheckBoxMenuItem getMitShowCandidateMaskes() {
+        if (mitShowCandidateMaskes == null) {
+            mitShowCandidateMaskes = new JCheckBoxMenuItem();
+            mitShowCandidateMaskes.setText("Show candidate maskes");
+            mitShowCandidateMaskes.setToolTipText("Dark all impossible cells that cannot fill the same digit");
+            mitShowCandidateMaskes.setMnemonic(KeyEvent.VK_M);
+            mitShowCandidateMaskes.setSelected(Settings.getInstance().isShowingCandidateMaskes());
+            mitShowCandidateMaskes.addItemListener(new java.awt.event.ItemListener() {
+                public void itemStateChanged(java.awt.event.ItemEvent e) {
+                    Settings.getInstance().setShowingCandidateMaskes(mitShowCandidateMaskes.isSelected());
+                    repaint();
+                }
+            });
+        }
+        return mitShowCandidateMaskes;
     }
 
     private JMenuItem getMitSelectTechniques() {

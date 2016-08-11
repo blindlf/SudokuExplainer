@@ -56,6 +56,19 @@ public class SudokuPanel extends JPanel {
     private Font bigFont;
     private Font legendFont;
 
+    private Color sameCellColor = new Color(
+	    Color.orange.getRed(),
+	    Color.orange.getGreen(),
+	    Color.orange.getBlue(), 80);
+    private Color sameRCColor = new Color(
+	    Color.orange.getRed(),
+	    Color.orange.getGreen(),
+	    Color.orange.getBlue(), 60);
+    private Color potentialMaskColor = new Color(
+	    Color.black.getRed(),
+	    Color.black.getGreen(),
+	    Color.black.getBlue(), 10);
+
 
     public SudokuPanel(SudokuFrame parent) {
         super();
@@ -333,7 +346,7 @@ public class SudokuPanel extends JPanel {
     private void setSelectedCell(Cell cell) {
         repaintCell(this.selectedCell);
         this.selectedCell = cell;
-        repaintCell(this.selectedCell);
+        repaint();
     }
 
     private void setFocusedCandidate(int value) {
@@ -422,8 +435,26 @@ public class SudokuPanel extends JPanel {
             col = Color.orange;
         else if (cell == focusedCell)
             col = Color.yellow;
-        else
-            col = Color.white;
+        else {
+            // Selected candidates color
+            int value = -1;
+            if (null != selectedCell && selectedCell.getValue() != 0)
+                value = selectedCell.getValue();
+            int x = value > 0 ? selectedCell.getX() : -1;
+            int y = value > 0 ? selectedCell.getY() : -1;
+
+	    boolean showing = Settings.getInstance().isShowingCandidateMaskes();
+
+            if (cell.getValue() == value) {
+                col = sameCellColor;
+            } else if (showing && value > 0 && !cell.hasPotentialValue(value)) {
+                col = potentialMaskColor;
+            } else if (showing && (cell.getX() == x || cell.getY() == y)) {
+                col = sameRCColor;
+            } else {
+                col = Color.white;
+            }
+        }
         g.setColor(col);
     }
 
