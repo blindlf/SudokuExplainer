@@ -18,6 +18,12 @@ public class ErrorMessage {
         this.args = args;
     }
 
+    public ErrorMessage(String message, boolean isFatal) {
+        this.message = message;
+        this.args = new String[0];
+        this.fatal = isFatal;
+    }
+
     public ErrorMessage(String message, boolean isFatal, Object... args) {
         this.message = message;
         this.args = args;

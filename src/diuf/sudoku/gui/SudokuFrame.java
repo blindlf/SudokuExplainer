@@ -60,7 +60,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JCheckBox chkFilter = null;
     private JButton btnCheckValidity = null;
     private JButton btnApplyHint = null;
-    private JComboBox cmbViewSelector = null;
+    private JComboBox<String> cmbViewSelector = null;
     private JPanel hintsSouthPanel = null;
     private JPanel ratingPanel = null;
     private JLabel jLabel = null;
@@ -686,9 +686,9 @@ public class SudokuFrame extends JFrame implements Asker {
         return btnApplyHint;
     }
 
-    private JComboBox getCmbViewSelector() {
+    private JComboBox<String> getCmbViewSelector() {
         if (cmbViewSelector == null) {
-            cmbViewSelector = new JComboBox();
+            cmbViewSelector = new JComboBox<String>();
             cmbViewSelector.setToolTipText("Toggle view (only for chaining hints)");
             cmbViewSelector.addItemListener(new java.awt.event.ItemListener() {
                 public void itemStateChanged(java.awt.event.ItemEvent e) {
