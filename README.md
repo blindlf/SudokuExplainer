@@ -8,4 +8,4 @@ The undo feature is integreated with https://github.com/Itsukara/SudokuExplainer
 
 ##Candidate Masks
 Highlight all possible cells that can fill the same digit.
-Turn it on from the options menu.
+Turn it on from the options menu, and clicks on the cell.
