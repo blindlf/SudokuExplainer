@@ -67,7 +67,7 @@ public class SudokuPanel extends JPanel {
     private Color potentialMaskColor = new Color(
 	    Color.black.getRed(),
 	    Color.black.getGreen(),
-	    Color.black.getBlue(), 10);
+	    Color.black.getBlue(), 27);
 
 
     public SudokuPanel(SudokuFrame parent) {
