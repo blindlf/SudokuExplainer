@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 
 import diuf.sudoku.Cell;
 import diuf.sudoku.Grid;
+import diuf.sudoku.Grid.Region;
 import diuf.sudoku.Settings;
 import diuf.sudoku.io.ErrorMessage;
 import diuf.sudoku.io.SudokuIO;
@@ -257,6 +258,15 @@ public class SudokuExplainer {
         frame.setExplanations(HtmlLoader.loadHtml(this, "Multiple.html"));
     }
     
+    public boolean isValueAllGiven(int value) {
+        Region[] regions = grid.getRegions(Grid.Block.class);
+        for (Region region : regions) {
+            if (!region.contains(value))
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Invoked when the user manually types a value in a cell of
      * the sudoku grid.

@@ -527,7 +527,9 @@ public class SudokuPanel extends JPanel {
 
     private void paintLegend(Graphics g) {
         g.setFont(legendFont);
-        g.setColor(new Color(0, 32, 64));
+        Color normalColor = new Color(0, 32, 64);
+        Color shadowColor = new Color(160, 160, 160);
+        Color givenColor = new Color(96, 128, 160);
         Settings settings = Settings.getInstance();
         for (int i = 0; i < 9; i++) {
             String xLegend;
@@ -540,8 +542,22 @@ public class SudokuPanel extends JPanel {
                 yLegend = "R" + (i + 1);
             else
                 yLegend = Integer.toString(i + 1);
-            drawStringCentered(g, yLegend,
-                    LEGEND_GAP_SIZE / 2, CELL_OUTER_SIZE * i + GRID_GAP_SIZE + CELL_OUTER_SIZE / 2);
+            if (!engine.isValueAllGiven(i + 1)) {
+                g.setColor(normalColor);
+                drawStringCentered(g, yLegend,
+                        LEGEND_GAP_SIZE / 2,
+                        CELL_OUTER_SIZE * i + GRID_GAP_SIZE + CELL_OUTER_SIZE / 2);
+            } else {
+                g.setColor(shadowColor);
+                drawStringCentered(g, yLegend,
+                        LEGEND_GAP_SIZE / 2 + 1,
+                        CELL_OUTER_SIZE * i + GRID_GAP_SIZE + CELL_OUTER_SIZE / 2 + 1);
+                g.setColor(givenColor);
+                drawStringCentered(g, yLegend,
+                        LEGEND_GAP_SIZE / 2,
+                        CELL_OUTER_SIZE * i + GRID_GAP_SIZE + CELL_OUTER_SIZE / 2);
+            }
+            g.setColor(normalColor);
             drawStringCentered(g, xLegend,
                     LEGEND_GAP_SIZE + i * CELL_OUTER_SIZE + CELL_OUTER_SIZE / 2,
                     CELL_OUTER_SIZE * 9 + GRID_GAP_SIZE + LEGEND_GAP_SIZE / 2);
