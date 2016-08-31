@@ -58,12 +58,13 @@ public class SudokuPanel extends JPanel {
 
     private Color redColor = Color.red;
     private Color selectedColor = Color.orange;
+    private Color selectedTextColor = new Color(0, 55, 128);
     private Color focusedColor = Color.yellow;
     private Color potentialMaskColor = new Color(0, 255, 0, 100);
-    private Color sameCellColor = new Color(255, 200, 0, 130);
+    private Color sameCellValueColor = new Color(220, 0, 220);
     private Color borderColor = Color.blue.darker();
     private Color cellColor = new Color(170, 170, 221);
-    private Color alternativeColor = new Color(232, 244, 244);
+    private Color alternativeColor = new Color(220, 244, 244);
 
 
     public SudokuPanel(SudokuFrame parent) {
@@ -450,9 +451,7 @@ public class SudokuPanel extends JPanel {
 
             boolean showing = Settings.getInstance().isShowingCandidateMasks();
 
-            if (cell.getValue() == value) {
-                col = sameCellColor;
-            } else if (showing && value > 0 && cell.hasPotentialValue(value)) {
+            if (showing && value > 0 && cell.hasPotentialValue(value)) {
                 col = potentialMaskColor;
             }
         }
@@ -461,11 +460,10 @@ public class SudokuPanel extends JPanel {
 
     private void initValueColor(Graphics g, Cell cell) {
         Color col = Color.black;
+        if (null != selectedCell && selectedCell.getValue() == cell.getValue())
+            col = sameCellValueColor;
         if (cell == selectedCell)
-            col = new Color(
-                    (col.getRed() + Color.orange.getRed()) / 2,
-                    (col.getGreen() + Color.orange.getGreen()) / 2,
-                    (col.getBlue() + Color.orange.getBlue()) / 2);
+            col = selectedTextColor;
         g.setColor(col);
     }
 
@@ -528,8 +526,8 @@ public class SudokuPanel extends JPanel {
     private void paintLegend(Graphics g) {
         g.setFont(legendFont);
         Color normalColor = new Color(0, 32, 64);
-        Color shadowColor = new Color(160, 160, 160);
-        Color givenColor = new Color(96, 128, 160);
+        Color shadowColor = new Color(140, 140, 140);
+        Color givenColor = new Color(170, 170, 170);
         Settings settings = Settings.getInstance();
         for (int i = 0; i < 9; i++) {
             String xLegend;
