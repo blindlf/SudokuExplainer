@@ -28,6 +28,7 @@ public class SudokuPanel extends JPanel {
 
     private int CELL_OUTER_SIZE = 45;
     private int CELL_INNER_SIZE = 39;
+    private int POTENTIAL_GAP = 4;
     private int GRID_GAP_SIZE = 2;
     private int LEGEND_GAP_SIZE = 42;
     private int CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
@@ -578,11 +579,10 @@ public class SudokuPanel extends JPanel {
                     if (!potential) {
                         g.fillRect(x * CELL_OUTER_SIZE, y * CELL_OUTER_SIZE, CELL_OUTER_SIZE, CELL_OUTER_SIZE);
                     } else {
-                        int border = 4;
-                        g.fillRect(x * CELL_OUTER_SIZE + border,
-                                y * CELL_OUTER_SIZE + border,
-                                CELL_OUTER_SIZE - border * 2,
-                                CELL_OUTER_SIZE - border * 2);
+                        g.fillRect(x * CELL_OUTER_SIZE + POTENTIAL_GAP,
+                                y * CELL_OUTER_SIZE + POTENTIAL_GAP,
+                                CELL_OUTER_SIZE - POTENTIAL_GAP * 2,
+                                CELL_OUTER_SIZE - POTENTIAL_GAP * 2);
                     }
                 }
             }
