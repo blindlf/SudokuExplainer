@@ -411,19 +411,16 @@ public class SudokuPanel extends JPanel {
                 }
             }
         }
-        if (cell == selectedCell)
-            col = new Color(
-                    (col.getRed() + Color.orange.getRed()) / 2,
-                    (col.getGreen() + Color.orange.getGreen()) / 2,
-                    (col.getBlue() + Color.orange.getBlue()) / 2);
+
         if (cell == selectedCell && value == focusedCandidate)
             col = Color.black;
         g.setColor(col);
         return isHighlighted;
     }
 
-    private void initFillColor(Graphics g, Cell cell, boolean origin) {
+    private boolean initFillColor(Graphics g, Cell cell, boolean origin) {
         Color col;
+        boolean ret = false;
 
         if ((cell.getX() / 3 % 2 == 0) ^ (cell.getY() / 3 % 2 == 0)) {
             col = alternativeColor;
@@ -432,7 +429,7 @@ public class SudokuPanel extends JPanel {
         }
         if (origin) {
             g.setColor(col);
-            return;
+            return ret;
         }
 
         if (redCells != null && redCells.contains(cell))
@@ -453,9 +450,11 @@ public class SudokuPanel extends JPanel {
 
             if (showing && value > 0 && cell.hasPotentialValue(value)) {
                 col = potentialMaskColor;
+                ret = true;
             }
         }
         g.setColor(col);
+        return ret;
     }
 
     private void initValueColor(Graphics g, Cell cell) {
@@ -574,8 +573,17 @@ public class SudokuPanel extends JPanel {
                     initFillColor(g, cell, true);
                     g.fillRect(x * CELL_OUTER_SIZE, y * CELL_OUTER_SIZE, CELL_OUTER_SIZE, CELL_OUTER_SIZE);
 
-                    initFillColor(g, cell, false);
-                    g.fillRect(x * CELL_OUTER_SIZE, y * CELL_OUTER_SIZE, CELL_OUTER_SIZE, CELL_OUTER_SIZE);
+                    boolean potential = initFillColor(g, cell, false);
+                    // Draw potential
+                    if (!potential) {
+                        g.fillRect(x * CELL_OUTER_SIZE, y * CELL_OUTER_SIZE, CELL_OUTER_SIZE, CELL_OUTER_SIZE);
+                    } else {
+                        int border = 4;
+                        g.fillRect(x * CELL_OUTER_SIZE + border,
+                                y * CELL_OUTER_SIZE + border,
+                                CELL_OUTER_SIZE - border * 2,
+                                CELL_OUTER_SIZE - border * 2);
+                    }
                 }
             }
         }
