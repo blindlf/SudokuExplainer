@@ -28,7 +28,7 @@ public class SudokuPanel extends JPanel {
 
     private int CELL_OUTER_SIZE = 45;
     private int CELL_INNER_SIZE = 39;
-    private int POTENTIAL_GAP = 4;
+    private int POTENTIAL_GAP = 5;
     private int GRID_GAP_SIZE = 2;
     private int LEGEND_GAP_SIZE = 42;
     private int CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
@@ -62,6 +62,7 @@ public class SudokuPanel extends JPanel {
     private Color selectedTextColor = new Color(0, 55, 128);
     private Color focusedColor = Color.yellow;
     private Color potentialMaskColor = new Color(0, 255, 0, 100);
+    private Color potentialMaskAltColor = new Color(0, 255, 190, 100);
     private Color sameCellValueColor = new Color(220, 0, 220);
     private Color borderColor = Color.blue.darker();
     private Color cellColor = new Color(170, 170, 221);
@@ -450,7 +451,11 @@ public class SudokuPanel extends JPanel {
             boolean showing = Settings.getInstance().isShowingCandidateMasks();
 
             if (showing && value > 0 && cell.hasPotentialValue(value)) {
-                col = potentialMaskColor;
+                if ((cell.getX() / 3 % 2 == 0) ^ (cell.getY() / 3 % 2 == 0)) {
+                    col = potentialMaskAltColor;
+                } else {
+                    col = potentialMaskColor;
+                }
                 ret = true;
             }
         }
