@@ -148,8 +148,11 @@ public class SudokuPanel extends JPanel {
             }
         });
         this.addKeyListener(new java.awt.event.KeyAdapter() {
+            private boolean isKeyPressed = false;
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
+                isKeyPressed = false;
+
                 int code = e.getKeyCode();
                 if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT ||
                         code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN) {
@@ -184,6 +187,7 @@ public class SudokuPanel extends JPanel {
                     }
                 } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
                     if ((e.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                        isKeyPressed = true;
                         int value = (code - KeyEvent.VK_0);
                         if (selectedCell != null) {
                             engine.candidateTyped(selectedCell, value);
@@ -201,7 +205,7 @@ public class SudokuPanel extends JPanel {
                 boolean isProcessed = false;
                 if (selectedCell != null) {
                     char ch = e.getKeyChar();
-                    if (ch >= '1' && ch <= '9') {
+                    if (!isKeyPressed && ch >= '1' && ch <= '9') {
                         int value = ch - '0';
                         engine.cellValueTyped(selectedCell, value);
                         repaint();
