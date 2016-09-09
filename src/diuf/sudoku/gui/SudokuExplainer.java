@@ -275,10 +275,12 @@ public class SudokuExplainer {
      * the cell's value was erased.
      */
     public void cellValueTyped(Cell cell, int value) {
-    	pushGrid();
         int oldValue = cell.getValue();
+        boolean same = oldValue == value;
+        if (!same)
+            pushGrid();
         cell.setValue(value);
-        if (value == 0 || oldValue != 0)
+        if (!same && (value == 0 || oldValue != 0))
             solver.rebuildPotentialValues();
         else
             solver.cancelPotentialValues();
