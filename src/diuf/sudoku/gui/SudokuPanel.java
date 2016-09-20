@@ -62,7 +62,7 @@ public class SudokuPanel extends JPanel {
     private Color selectedTextColor = new Color(0, 55, 128);
     private Color focusedColor = Color.yellow;
     private Color potentialMaskColor = new Color(0, 255, 0, 100);
-    private Color potentialMaskAltColor = new Color(0, 255, 190, 100);
+    private Color potentialMaskAltColor = new Color(0, 255, 190, 150);
     private Color sameCellValueColor = new Color(220, 0, 220);
     private Color borderColor = Color.blue.darker();
     private Color cellColor = new Color(170, 170, 221);
@@ -109,7 +109,7 @@ public class SudokuPanel extends JPanel {
                 if (target == selectedCell && target != null) {
                     int value = getCandidateAt(e.getX(), e.getY());
                     if (e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3
-                            || (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
+                            || (e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK)) != 0) {
                         if (value != 0) { // Check that the cell is empty
                             // Toggle a candidate
                             engine.candidateTyped(target, value);
@@ -130,7 +130,7 @@ public class SudokuPanel extends JPanel {
                     setFocusedCandidate(0);
                     setSelectedCell(target);
                     if (e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3
-                            || (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)
+                            || (e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK)) != 0)
                         setFocusedCandidate(getCandidateAt(e.getX(), e.getY()));
                 }
                 SudokuPanel.super.requestFocusInWindow();
@@ -141,7 +141,7 @@ public class SudokuPanel extends JPanel {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
                 setFocusedCell(getCellAt(e.getX(), e.getY()));
-                if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)
+                if ((e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK)) != 0)
                     setFocusedCandidate(getCandidateAt(e.getX(), e.getY()));
                 else
                     setFocusedCandidate(0);
@@ -186,7 +186,7 @@ public class SudokuPanel extends JPanel {
                         repaint();
                     }
                 } else if (code >= KeyEvent.VK_1 && code <= KeyEvent.VK_9) {
-                    if ((e.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                    if ((e.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK | InputEvent.META_DOWN_MASK)) != 0) {
                         isKeyPressed = true;
                         int value = (code - KeyEvent.VK_0);
                         if (selectedCell != null) {

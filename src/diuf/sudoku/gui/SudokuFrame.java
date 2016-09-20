@@ -837,7 +837,12 @@ public class SudokuFrame extends JFrame implements Asker {
     }
 
     private void setCommand(JMenuItem item, char cmd) {
-        item.setAccelerator(KeyStroke.getKeyStroke(cmd, InputEvent.CTRL_MASK));
+        String vers = System.getProperty("os.name").toLowerCase();
+        if (vers.indexOf("mac") != -1) {
+            item.setAccelerator(KeyStroke.getKeyStroke(cmd, InputEvent.META_MASK));
+        } else {
+            item.setAccelerator(KeyStroke.getKeyStroke(cmd, InputEvent.CTRL_MASK));
+        }
     }
 
     private JMenu getFileMenu() {
