@@ -104,7 +104,12 @@ public class SudokuPanel extends JPanel {
                 setFocusedCell(null);
             }
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
+            public void mouseReleased(java.awt.event.MouseEvent e) {
+                // Workaround mouseClicked won't be fired while moving mouse
+                // http://stackoverflow.com/questions/3382330/mouselistener-for-jpanel-missing-mouseclicked-events
+                if (!SudokuPanel.this.contains(e.getPoint()))
+                    return;
+
                 Cell target = getCellAt(e.getX(), e.getY());
                 if (target == selectedCell && target != null) {
                     int value = getCandidateAt(e.getX(), e.getY());
