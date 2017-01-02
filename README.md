@@ -1,5 +1,5 @@
 # SudokuExplainer
-Fork from http://diuf.unifr.ch/pai/people/juillera/Sudoku/Sudoku.html
+Forked from http://diuf.unifr.ch/pai/people/juillera/Sudoku/Sudoku.html
 
 #New Features:
 
