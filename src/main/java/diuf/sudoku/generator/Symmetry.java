@@ -112,12 +112,12 @@ public enum Symmetry {
 
         @Override
         public String toString() {
-            return "180° rotational";
+            return "180Â° rotational";
         }
 
         @Override
         public String getDescription() {
-            return "Symmetric under a 180° rotation (central symmetry)";
+            return "Symmetric under a 180Â° rotation (central symmetry)";
         }
     },
     Rotational90 {
@@ -132,12 +132,12 @@ public enum Symmetry {
 
         @Override
         public String toString() {
-            return "90° rotational";
+            return "90Â° rotational";
         }
 
         @Override
         public String getDescription() {
-            return "Symmetric under a 90° rotation";
+            return "Symmetric under a 90Â° rotation";
         }
     },
     None {
@@ -168,7 +168,7 @@ public enum Symmetry {
 
         @Override
         public String getDescription() {
-            return "All symmetries (around the 8 axes and under a 90° rotation)";
+            return "All symmetries (around the 8 axes and under a 90Â° rotation)";
         }
     };
 
