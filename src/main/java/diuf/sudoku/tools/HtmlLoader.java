@@ -22,7 +22,7 @@ public class HtmlLoader {
      */
     public static String loadHtml(Object caller, String fileName) {
         Class<?> callerClass = caller.getClass();
-        InputStream input = callerClass.getResourceAsStream(fileName);
+        InputStream input = callerClass.getResourceAsStream("/html/" + fileName);
         if (input == null) {
             System.err.println("Resource not found: " + fileName);
             return LOAD_ERROR.replace("{0}", fileName);
